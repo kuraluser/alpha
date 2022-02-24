@@ -1246,7 +1246,7 @@ getDischargeStudyBackLoadingDatatableColumns(permission: IPermission, dischargeS
       const _backLoadingDetailDetail = <IBackLoadingDetails>{};
       const unitConversion = {
         kl: this.quantityPipe.transform(backLoadingDetail.quantity, QUANTITY_UNIT.MT, QUANTITY_UNIT.KL, backLoadingDetail.api, backLoadingDetail.temperature),
-        bbls: this.quantityPipe.transform(backLoadingDetail.quantity, QUANTITY_UNIT.KL, QUANTITY_UNIT.BBLS, backLoadingDetail.api, backLoadingDetail.temperature),
+        bbls: this.quantityPipe.transform(backLoadingDetail.quantity, QUANTITY_UNIT.MT, QUANTITY_UNIT.BBLS, backLoadingDetail.api, backLoadingDetail.temperature),
         mt: this.quantityPipe.transform(backLoadingDetail.quantity, QUANTITY_UNIT.MT, QUANTITY_UNIT.MT, backLoadingDetail.api, backLoadingDetail.temperature),
         quantity: this.quantityPipe.transform(backLoadingDetail.quantity, QUANTITY_UNIT.MT, QUANTITY_UNIT.KL, backLoadingDetail.api, backLoadingDetail.temperature,-1),
       }
