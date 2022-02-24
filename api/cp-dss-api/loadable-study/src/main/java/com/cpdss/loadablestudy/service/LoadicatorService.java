@@ -1433,28 +1433,27 @@ public class LoadicatorService {
     List<String> judgements = new ArrayList<String>();
     List<LoadablePattern> loadablePatterns = new ArrayList<>();
     if (isPattern) {
-      Boolean isValid = true;
       for (LoadicatorResultDetails result :
           algoResponse.getLoadicatorResults().getLoadicatorResultDetails()) {
+
         this.synopticalTableLoadicatorDataRepository.deleteBySynopticalTableAndLoadablePatternId(
             this.synopticalTableRepository.getOne(result.getSynopticalId()),
             algoResponse.getLoadicatorResults().getLoadablePatternId());
         entities.add(
             this.createSynopticalTableLoadicatorDataEntity(
                 algoResponse.getLoadicatorResults(), result));
+
         if (judgementEnabled && result.getJudgement() != null && !result.getJudgement().isEmpty()) {
-          isValid = false;
           SynopticalTable synopticalTable =
               synopticalTableRepository.getOne(result.getSynopticalId());
-          if (loadableStudy.getPlanningTypeXId().equals(PLANNING_TYPE_LOADING)
+          if (!(loadableStudy.getPlanningTypeXId().equals(PLANNING_TYPE_LOADING)
               && synopticalTable
                   .getLoadableStudyPortRotation()
                   .getOperation()
                   .getId()
                   .equals(DISCHARGING_OPERATION_ID)
-              && synopticalTable.getOperationType().equals(SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE)) {
-            isValid = true;
-          } else {
+              && synopticalTable.getOperationType().equals(SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE))) {
+
             judgements.addAll(
                 result.getJudgement().stream()
                     .map(
@@ -1468,7 +1467,8 @@ public class LoadicatorService {
           }
         }
       }
-      if (!isValid) {
+
+      if (!judgements.isEmpty()) {
         log.error(
             "Judgement check failed for loadable pattern {}",
             algoResponse.getLoadicatorResults().getLoadablePatternId());
@@ -1495,7 +1495,7 @@ public class LoadicatorService {
     } else {
       for (LoadicatorPatternDetailsResults patternDetails :
           algoResponse.getLoadicatorResultsPatternWise()) {
-        Boolean isValid = true;
+
         for (LoadicatorResultDetails result : patternDetails.getLoadicatorResultDetails()) {
           entities.add(this.createSynopticalTableLoadicatorDataEntity(patternDetails, result));
           LoadablePattern loadablePattern =
@@ -1503,37 +1503,38 @@ public class LoadicatorService {
           if (judgementEnabled
               && result.getJudgement() != null
               && !result.getJudgement().isEmpty()) {
-            isValid = false;
+
             SynopticalTable synopticalTable =
                 synopticalTableRepository.getOne(result.getSynopticalId());
-            if (loadableStudy.getPlanningTypeXId().equals(PLANNING_TYPE_LOADING)
+            if (!(loadableStudy.getPlanningTypeXId().equals(PLANNING_TYPE_LOADING)
                 && synopticalTable
                     .getLoadableStudyPortRotation()
                     .getOperation()
                     .getId()
                     .equals(DISCHARGING_OPERATION_ID)
-                && synopticalTable.getOperationType().equals(SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE)) {
-              isValid = true;
+                && synopticalTable.getOperationType().equals(SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE))) {
+
+              judgements.addAll(
+                  result.getJudgement().stream()
+                      .map(
+                          err ->
+                              String.format(
+                                  "CASE %d: Port %d (%s) : %s",
+                                  loadablePattern.getCaseNumber(),
+                                  synopticalTable.getPortXid(),
+                                  synopticalTable.getOperationType(),
+                                  err))
+                      .collect(Collectors.toList()));
             }
-            judgements.addAll(
-                result.getJudgement().stream()
-                    .map(
-                        err ->
-                            String.format(
-                                "CASE %d: Port %d (%s) : %s",
-                                loadablePattern.getCaseNumber(),
-                                synopticalTable.getPortXid(),
-                                synopticalTable.getOperationType(),
-                                err))
-                    .collect(Collectors.toList()));
           }
-          if (!isValid) {
+
+          if (!judgements.isEmpty()) {
             log.error(
                 "Judgement check failed for loadable pattern {}, CASE {}",
                 loadablePattern.getId(),
                 loadablePattern.getCaseNumber());
           }
-          loadablePattern.setIsActive(isValid);
+          loadablePattern.setIsActive(judgements.isEmpty());
           loadablePatternRepository.save(loadablePattern);
         }
       }
