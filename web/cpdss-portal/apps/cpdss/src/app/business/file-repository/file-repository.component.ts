@@ -55,7 +55,13 @@ export class FileRepositoryComponent implements OnInit, OnDestroy {
     'pdf': 'icon-file icon-file-pdf',
     'txt': 'icon-file icon-file-text',
     'csv': 'icon-file icon-file-csv',
-    'xlsx': 'icon-file icon-file-excel'
+    'xlsx': 'icon-file icon-file-excel',
+    'doc': 'icon-file icon-file-word',
+    'jpg': 'icon-file icon-file-jpg',
+    'png': 'icon-file icon-file-png',
+    'msg': 'icon-file icon-file-msg',
+    'eml': 'icon-file icon-file-eml',
+    'xls': 'icon-file icon-file-excel'
   };
   editData: any;
   permission: any;

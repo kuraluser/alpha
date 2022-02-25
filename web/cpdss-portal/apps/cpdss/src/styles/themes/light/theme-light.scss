@@ -1579,6 +1579,18 @@ header{
   &.icon-file-excel{
     background: url($images-theme + 'file-excel-icon.png') no-repeat;
   }
+  &.icon-file-jpg{
+    background: url($images-theme + 'jpg-icon.png') no-repeat;
+  }
+  &.icon-file-png{
+    background: url($images-theme + 'png-icon.png') no-repeat;
+  }
+  &.icon-file-msg{
+    background: url($images-theme + 'msg-icon.png') no-repeat;
+  }
+  &.icon-file-eml{
+    background: url($images-theme + 'eml-icon.png') no-repeat;
+  }
 }
 
 

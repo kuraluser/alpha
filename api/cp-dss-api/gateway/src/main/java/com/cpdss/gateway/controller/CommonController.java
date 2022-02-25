@@ -99,7 +99,7 @@ public class CommonController {
       @RequestHeader HttpHeaders headers,
       @RequestParam(required = false, defaultValue = "10") int pageSize,
       @RequestParam(required = false, defaultValue = "0") int pageNo,
-      @RequestParam(required = false, defaultValue = "id") String sortBy,
+      @RequestParam(required = false, defaultValue = "createdDateTime") String sortBy,
       @RequestParam(required = false, defaultValue = "DESC") String orderBy,
       @RequestParam Map<String, String> params)
       throws CommonRestException {
