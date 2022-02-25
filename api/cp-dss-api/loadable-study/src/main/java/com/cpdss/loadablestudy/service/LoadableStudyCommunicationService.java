@@ -649,7 +649,8 @@ public class LoadableStudyCommunicationService {
                       LoadableStudyTables.CARGO_NOMINATION_OPERATION_DETAILS,
                       data,
                       dataTransferStage.getId(),
-                      LOADABLE_STUDY_COLUMNS.CARGO_NOMINATION_XID.getColumnName());
+                      LOADABLE_STUDY_COLUMNS.CARGO_NOMINATION_XID.getColumnName(),
+                      LOADABLE_STUDY_COLUMNS.PORT_ROTATION_XID.getColumnName());
               break;
             }
           case stability_parameters:
@@ -865,9 +866,9 @@ public class LoadableStudyCommunicationService {
       try {
         saveVoyage();
         saveLoadableStudy();
-        saveCargoNomination();
         saveCommingleCargo();
         saveLoadableStudyPortRotation();
+        saveCargoNomination();
         saveOnHandQuantity();
         saveOnBoardQuantity();
         saveLoadableQuantity();
@@ -1102,9 +1103,18 @@ public class LoadableStudyCommunicationService {
                     if (cargoNomination
                         .getId()
                         .equals(
-                            cargoNominationOperationDetails.getCommunicationRelatedEntityId())) {
+                            cargoNominationOperationDetails
+                                .getCommunicationRelatedIdMap()
+                                .get("cargo_nomination_xid"))) {
                       cargoNominationOperationDetails.setCargoNomination(cargoNomination);
                     }
+
+                    Optional<LoadableStudyPortRotation> portRotationOpt =
+                        loadableStudyPortRotationRepository.findById(
+                            cargoNominationOperationDetails
+                                .getCommunicationRelatedIdMap()
+                                .get("port_rotation_xid"));
+                    portRotationOpt.ifPresent(cargoNominationOperationDetails::setPortRotation);
                   });
 
               // setting cargoNominationPortDetails to cargoNomination
@@ -1122,24 +1132,64 @@ public class LoadableStudyCommunicationService {
 
   /** Method to save cargo_nomination_operation_details table */
   @SuppressWarnings("unused")
-  private void saveCargoNominationOperationDetails() {
+  private void saveCargoNominationOperationDetails() throws GenericServiceException {
     currentTableName = LoadableStudyTables.CARGO_NOMINATION_OPERATION_DETAILS.getTable();
 
     if (isValidStageEntity(cargoNominationOperationDetailsStage, currentTableName)) {
-      cargoNominationOperationDetailsStage.forEach(
-          cargoNominationOperationDetails -> {
-            Optional<CargoNominationPortDetails> optionalCargoNominationOperationDetails =
-                cargoNominationOperationDetailsRepository.findById(
-                    cargoNominationOperationDetails.getId());
-            setEntityDocFields(
-                cargoNominationOperationDetails, optionalCargoNominationOperationDetails);
+      for (CargoNominationPortDetails cargoNominationOperationDetails :
+          cargoNominationOperationDetailsStage) {
+        Optional<CargoNominationPortDetails> optionalCargoNominationOperationDetails =
+            cargoNominationOperationDetailsRepository.findById(
+                cargoNominationOperationDetails.getId());
+        setEntityDocFields(
+            cargoNominationOperationDetails, optionalCargoNominationOperationDetails);
 
-            Optional<CargoNomination> optionalCargoNomination =
-                cargoNominationRepository.findById(
-                    cargoNominationOperationDetails.getCommunicationRelatedEntityId());
-            optionalCargoNomination.ifPresent(cargoNominationOperationDetails::setCargoNomination);
-          });
+        CargoNomination cargoNomination =
+            cargoNominationRepository
+                .findById(
+                    cargoNominationOperationDetails
+                        .getCommunicationRelatedIdMap()
+                        .get("cargo_nomination_xid"))
+                .orElseThrow(
+                    () -> {
+                      log.error(
+                          "Cargo Nomination not found in cargo_nomination table. Id: {}",
+                          loadablePatternAlgoStatusStage
+                              .getCommunicationRelatedIdMap()
+                              .get("cargo_nomination_xid"));
+                      return new GenericServiceException(
+                          "Cargo Nomination not found in cargo_nomination table. Id: "
+                              + loadablePatternAlgoStatusStage
+                                  .getCommunicationRelatedIdMap()
+                                  .get("cargo_nomination_xid"),
+                          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+                          HttpStatusCode.INTERNAL_SERVER_ERROR);
+                    });
+        cargoNominationOperationDetails.setCargoNomination(cargoNomination);
 
+        LoadableStudyPortRotation portRotation =
+            loadableStudyPortRotationRepository
+                .findById(
+                    cargoNominationOperationDetails
+                        .getCommunicationRelatedIdMap()
+                        .get("port_rotation_xid"))
+                .orElseThrow(
+                    () -> {
+                      log.error(
+                          "Port Rotation not found in loadable_study_port_rotation table. Id: {}",
+                          loadablePatternAlgoStatusStage
+                              .getCommunicationRelatedIdMap()
+                              .get("port_rotation_xid"));
+                      return new GenericServiceException(
+                          "Port Rotation not found in loadable_study_port_rotation table. Id: "
+                              + loadablePatternAlgoStatusStage
+                                  .getCommunicationRelatedIdMap()
+                                  .get("port_rotation_xid"),
+                          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+                          HttpStatusCode.INTERNAL_SERVER_ERROR);
+                    });
+        cargoNominationOperationDetails.setPortRotation(portRotation);
+      }
       // Save data
       cargoNominationOperationDetailsStage =
           cargoNominationOperationDetailsRepository.saveAll(cargoNominationOperationDetailsStage);
