@@ -164,11 +164,22 @@ public class CharterService {
       VesselInfo.CharterDetailed request, VesselInfo.CharterDetailReply.Builder charterDetailsReply)
       throws GenericServiceException {
 
+    this.validateCharterName(request.getId(), request.getCharterName());
     Charterer charterDetails;
+
     if (request.getId() == 0) {
       charterDetails = new Charterer();
     } else {
-      charterDetails = this.charterDetailsRepository.getById(request.getId());
+      Optional<Charterer> charter =
+          this.charterDetailsRepository.findByIdAndIsActiveTrue(request.getId());
+      if (charter.isEmpty()) {
+        log.error("Charter id doesn't exist");
+        throw new GenericServiceException(
+            "Charter with given id does not exist",
+            CommonErrorCodes.E_HTTP_BAD_REQUEST,
+            HttpStatusCode.BAD_REQUEST);
+      }
+      charterDetails = charter.get();
     }
     charterDetails.setIsActive(true);
     charterDetails.setName(request.getCharterName());
@@ -218,6 +229,18 @@ public class CharterService {
     charterDetailsReply.setCharterDetail(charterDetailed);
   }
 
+  private void validateCharterName(Long id, String charterName) throws GenericServiceException {
+    Charterer duplicate = charterDetailsRepository.findByNameIgnoreCaseAndIsActiveTrue(charterName);
+    if ((id == 0 && null != duplicate)
+        || (null != duplicate && id != duplicate.getId().longValue())) {
+      log.error("Duplicate charter name");
+      throw new GenericServiceException(
+          "Charter already exists with given name",
+          CommonErrorCodes.E_CPDSS_CHARTER_NAME_ALREADY_EXISTS,
+          HttpStatusCode.BAD_REQUEST);
+    }
+  }
+
   /**
    * To save the charter<===>vessel mappings. Same charter can be mapped to more than one vessel
    *
@@ -243,7 +266,7 @@ public class CharterService {
                               charter -> {
                                 Optional<VesselChartererMapping> charterVesselMappingWrapper =
                                     this.vesselChartererMappingRepository
-                                        .findByChartererAndVesselAndIsActiveTrue(
+                                        .findByCharterer_idAndVessel_idAndIsActiveTrue(
                                             charterVesselMappingDetail.getCharterId(),
                                             charterVesselMappingDetail.getVesselId());
 

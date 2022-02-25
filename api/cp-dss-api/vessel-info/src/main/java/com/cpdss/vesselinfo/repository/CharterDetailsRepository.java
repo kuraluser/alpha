@@ -10,4 +10,6 @@ public interface CharterDetailsRepository
     extends CommonCrudRepository<Charterer, Long>, JpaSpecificationExecutor<Charterer> {
 
   Optional<Charterer> findByIdAndIsActiveTrue(Long id);
+
+  Charterer findByNameIgnoreCaseAndIsActiveTrue(String charterName);
 }

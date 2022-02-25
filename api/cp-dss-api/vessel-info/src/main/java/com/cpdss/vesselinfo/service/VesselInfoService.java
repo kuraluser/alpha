@@ -3251,11 +3251,19 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
       ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
       responseStatus.setStatus("SUCCESS");
       charterDetailsReply.setResponseStatus(responseStatus);
+    } catch (GenericServiceException e) {
+      log.error(e.getMessage(), e);
+      charterDetailsReply.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setCode(e.getCode())
+              .setMessage(e.getMessage())
+              .setStatus(FAILED)
+              .setHttpStatusCode(e.getStatus().value())
+              .build());
     } catch (Exception e) {
       log.error("Error in saveCharterDetails method ", e);
-      ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
-      responseStatus.setStatus("FAILURE");
-      charterDetailsReply.setResponseStatus(responseStatus);
+      charterDetailsReply.setResponseStatus(
+          ResponseStatus.newBuilder().setMessage(e.getMessage()).setStatus(FAILED).build());
     } finally {
       responseObserver.onNext(charterDetailsReply.build());
       responseObserver.onCompleted();

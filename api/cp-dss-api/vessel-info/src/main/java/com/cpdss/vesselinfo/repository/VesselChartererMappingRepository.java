@@ -21,6 +21,6 @@ public interface VesselChartererMappingRepository
   public List<VesselChartererMapping> findBycharterer_idInAndIsActive(
       final Set<Long> charterer, final boolean isActive);
 
-  Optional<VesselChartererMapping> findByChartererAndVesselAndIsActiveTrue(
+  Optional<VesselChartererMapping> findByCharterer_idAndVessel_idAndIsActiveTrue(
       Long charterId, Long vesselId);
 }

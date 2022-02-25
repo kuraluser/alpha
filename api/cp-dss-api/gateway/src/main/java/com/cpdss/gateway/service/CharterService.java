@@ -160,8 +160,8 @@ public class CharterService {
     VesselInfo.CharterDetailReply charterDetailReply =
         this.vesselInfoServiceBlockingStub.saveCharterDetails(charterDetailsRequest.build());
 
-    if (charterDetailReply == null
-        || !(SUCCESS.equalsIgnoreCase(charterDetailReply.getResponseStatus().getStatus()))) {
+    if (charterDetailReply != null
+        && !SUCCESS.equalsIgnoreCase(charterDetailReply.getResponseStatus().getStatus())) {
       log.error("Failed to save Charter!");
       throw new GenericServiceException(
           "Failed to save Charter!",

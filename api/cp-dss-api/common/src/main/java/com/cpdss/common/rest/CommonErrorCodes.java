@@ -88,4 +88,6 @@ public interface CommonErrorCodes {
   String E_CPDSS_PORT_ROTATION_IS_USED = "393";
 
   String E_CPDSS_NO_CARGONOMINATION_FOR_PORT_ROTATION = "395";
+
+  String E_CPDSS_CHARTER_NAME_ALREADY_EXISTS = "360";
 }
