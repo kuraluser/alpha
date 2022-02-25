@@ -41,7 +41,7 @@ export class ApiTemperatureHistoryPopupComponent implements OnInit {
   set apiTempHistoryPopupData(apiTempHistoryPopupData: IApiTempPopupData) {
     this._apiTempHistoryPopupData = apiTempHistoryPopupData;
     const cargoId = apiTempHistoryPopupData.cargoId;
-    const portIDs = [...apiTempHistoryPopupData.rowDataCargo].map(port => (port.id));
+    const portIDs = [...apiTempHistoryPopupData.rowDataCargo].map(port => (port.portId));
     this.getApiTempHistoryData(cargoId, portIDs);
     this.apiTempHistoryForm = this.fb.group({
       selectMonth: this.fb.control(null),
@@ -93,7 +93,7 @@ export class ApiTemperatureHistoryPopupComponent implements OnInit {
       if (responsePortHistory?.length) {
       const loadingPortArray = [...this.apiTempHistoryPopupData.rowDataCargo];
         this.apiTempHistoryData = responsePortHistory.map(historyObj => {
-          const loadingPort = loadingPortArray.find(port => port.id === historyObj.loadingPortId);
+          const loadingPort = loadingPortArray.find(port => port.portId === historyObj.loadingPortId);
           const formattedDate = historyObj.loadedDate.split(' ')[0] ? moment(historyObj.loadedDate.split(' ')[0], 'DD-MM-YYYY').format(AppConfigurationService.settings?.dateFormat.split(' ')[0]) : '';
           return Object.assign(historyObj, { loadingPortName: loadingPort?.name, loadedDate: formattedDate });
         });
@@ -126,7 +126,7 @@ export class ApiTemperatureHistoryPopupComponent implements OnInit {
    * @memberof ApiTemperatureHistoryPopupComponent
    */
   onPortChange(event): void {
-    this.selectedPortID = event?.value?.id;
+    this.selectedPortID = event?.value?.portId;
     this.getMonthWiseApiTempHistoryData();
   }
 

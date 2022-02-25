@@ -316,6 +316,11 @@ export class LoadingDischargingBerthComponent implements OnInit {
    * @memberof LoadingDischargingBerthComponent
    */
   setBerthDetails(berthInfo: IBerth, index: number, edit: boolean = false) {
+    if(edit) {
+      this.berthDetailsForm.enable();
+    } else {
+      this.berthDetailsForm.disable();
+    }
     const lineDisplacement = Number(berthInfo.lineDisplacement);
     let berthDetailsForm = {
       berthId: berthInfo.berthId,
@@ -365,9 +370,7 @@ export class LoadingDischargingBerthComponent implements OnInit {
         this.berthFormArray.at(index).patchValue({
           edit: false
         })
-        this.berthDetailsForm.disable();
       } else {
-        this.berthDetailsForm.enable();
         this.berthDetailsForm.markAllAsTouched();
         this.berthDetailsForm.markAsDirty();
         this.berthDetailsForm.updateValueAndValidity();
@@ -435,7 +438,6 @@ export class LoadingDischargingBerthComponent implements OnInit {
         })
       }
     });
-    this.berthDetailsForm.enable();
   }
 
   /**

@@ -784,6 +784,7 @@ export interface IApiTempLoadingPorts {
     isAdd?: boolean;
     name: string;
     quantity: number;
+    portId?: number;
 }
 /**
  * Interface for get Api-Temperature popup passvalue

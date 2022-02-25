@@ -111,11 +111,13 @@ export class PortsComponent implements OnInit, OnDestroy {
     private permissionsService: PermissionsService) { }
 
   async ngOnInit(): Promise<void> {
+    this.ngxSpinnerService.show();
     await this.getTimeZoneList();
     this.portEtaEtdPermission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['PortTabEtaEtd'], false);
     this.columns = await this.loadableStudyDetailsTransformationService.getPortDatatableColumns(this.permission, this.portEtaEtdPermission, this.loadableStudy?.statusId, this.voyage);
     this.initSubscriptions();
-    this.getPortDetails();
+    await this.getPortDetails();
+    this.ngxSpinnerService.hide()
   }
 
   ngOnDestroy() {
@@ -153,7 +155,6 @@ export class PortsComponent implements OnInit, OnDestroy {
  * @memberof PortsComponent
  */
   async getPortDetails() {
-    this.ngxSpinnerService.show();
     this.listData = await this.getDropdownData();
     await this.getPorts();
     const hasPendingUpdates = await this.checkForPendingUpdates();
@@ -172,7 +173,6 @@ export class PortsComponent implements OnInit, OnDestroy {
     this.portsLists?.forEach(row => {
       this.portsListSaved.push(JSON.parse(JSON.stringify(row)))
     })
-    this.ngxSpinnerService.hide();
   }
 
   /**

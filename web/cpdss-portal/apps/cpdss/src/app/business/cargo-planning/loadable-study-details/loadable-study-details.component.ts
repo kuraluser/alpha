@@ -289,7 +289,6 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
    */
   async getLoadableStudyDetails(vesselId: number, voyageId: number, loadableStudyId: number) {
     const translationKeys = await this.translateService.get(['TOTAL_QUANTITY_WARNING', 'TOTAL_QUANTITY_ERROR_DETAILS']).toPromise();
-    this.ngxSpinnerService.show();
     if (this.selectedLoadableStudy?.dischargingCargoId) {
       this.selectedDischargeCargo = { id: this.selectedLoadableStudy?.dischargingCargoId }
     } else {
@@ -322,7 +321,6 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
         this.loadableQuantityModel = loadableQuantityResult;
       }
     }
-    this.ngxSpinnerService.hide();
   }
 
   /**
