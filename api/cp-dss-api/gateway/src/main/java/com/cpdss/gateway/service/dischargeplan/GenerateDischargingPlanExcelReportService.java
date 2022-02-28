@@ -1733,24 +1733,24 @@ public class GenerateDischargingPlanExcelReportService {
           break;
       }
     }
-    List<ShearingForce> sf = new ArrayList<>();
+    List<ShearingForce> bm = new ArrayList<>();
     sequenceStability.setAfter(afterList);
     sequenceStability.setFw(fwList);
-    IntStream.range(0, bmFrNoList.size())
+    IntStream.range(0, size)
         .forEach(
             i -> {
               ShearingForce listItem = new ShearingForce();
               listItem.setFrameNumber(bmFrNoList.get(i));
               listItem.setPercentage(bmList.get(i));
-              sf.add(listItem);
+              bm.add(listItem);
             });
     ;
-    sequenceStability.setBm(sf);
+    sequenceStability.setBm(bm);
     sequenceStability.setGm(gmList);
     sequenceStability.setTrim(trimList);
     sequenceStability.setUkc(ukcList);
-    sf.clear();
-    IntStream.range(0, sfFrNoList.size())
+    List<ShearingForce> sf = new ArrayList<>();
+    IntStream.range(0, size)
         .forEach(
             i -> {
               ShearingForce listItem = new ShearingForce();
@@ -1758,7 +1758,6 @@ public class GenerateDischargingPlanExcelReportService {
               listItem.setPercentage(sfList.get(i));
               sf.add(listItem);
             });
-    ;
     sequenceStability.setShearingForce(sf);
     return sequenceStability;
   }

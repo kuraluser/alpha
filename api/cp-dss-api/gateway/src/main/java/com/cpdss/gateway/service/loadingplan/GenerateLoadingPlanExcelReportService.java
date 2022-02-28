@@ -1555,7 +1555,6 @@ public class GenerateLoadingPlanExcelReportService {
               listItem.setPercentage(sfList.get(i));
               sf.add(listItem);
             });
-    ;
     sequenceStability.setShearingForce(sf);
     return sequenceStability;
   }
