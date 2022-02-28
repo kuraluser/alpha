@@ -172,8 +172,7 @@ public class CargoNominationService {
    *
    * @param dischargeStudyId
    * @param loadableStudyId
-   * @param portId
-   * @param operationId
+   * @param savedDischargePort
    * @param commingleCargoList
    * @param savedCargos
    * @throws GenericServiceException
@@ -181,8 +180,7 @@ public class CargoNominationService {
   public List<CargoNomination> saveDsichargeStudyCommingleAsCargoNominations(
       Long dischargeStudyId,
       Long loadableStudyId,
-      Long portId,
-      Long operationId,
+      LoadableStudyPortRotation savedDischargePort,
       List<CommingleCargoToDischargePortwiseDetails> commingleCargoList,
       List<CargoNomination> savedCargos,
       List<MaxQuantityDetails> quantityRatioList)
@@ -216,12 +214,14 @@ public class CargoNominationService {
 
               // setting operation details against cargo nomination
               CargoNominationPortDetails portDetail = new CargoNominationPortDetails();
-              portDetail.setPortId(portId);
-              portDetail.setOperationId(operationId);
+              portDetail.setPortId(savedDischargePort.getPortXId());
+              portDetail.setPortRotation(savedDischargePort);
+              portDetail.setOperationId(savedDischargePort.getOperation().getId());
               portDetail.setIsActive(true);
               portDetail.setCargoNomination(dischargeStudyCargo);
               if (cargo.getQuantity() != null) {
-                calculateBLfigForCommingle(cargo, quantityRatioList, portId, savedCargos);
+                calculateBLfigForCommingle(
+                    cargo, quantityRatioList, savedDischargePort.getId(), savedCargos);
                 portDetail.setQuantity(
                     new BigDecimal(cargo.getCargo1BLfigure() + cargo.getCargo2BLfigure()));
                 portDetail.setMode(2L);
@@ -257,7 +257,7 @@ public class CargoNominationService {
   private void calculateBLfigForCommingle(
       CommingleCargoToDischargePortwiseDetails cargo,
       List<MaxQuantityDetails> quantityRatioList,
-      Long portId,
+      Long portRotationId,
       List<CargoNomination> savedCargos) {
     Double cargo1Bl = 0.0;
     Double cargo2Bl = 0.0;
@@ -283,7 +283,7 @@ public class CargoNominationService {
       if (cargoNominationOpt.isPresent()) {
         Optional<CargoNominationPortDetails> cargoOperationOpt =
             cargoNominationOpt.get().getCargoNominationPortDetails().stream()
-                .filter(item -> item.getPortId().equals(portId))
+                .filter(item -> item.getPortRotation().getId().equals(portRotationId))
                 .findFirst();
         if (cargoOperationOpt.isPresent()) {
           if (cargoOperationOpt.get().getQuantity().doubleValue() > cargo1Bl) {
@@ -321,7 +321,7 @@ public class CargoNominationService {
       if (cargoNominationOpt.isPresent()) {
         Optional<CargoNominationPortDetails> cargoOperationOpt =
             cargoNominationOpt.get().getCargoNominationPortDetails().stream()
-                .filter(item -> item.getPortId().equals(portId))
+                .filter(item -> item.getPortRotation().getId().equals(portRotationId))
                 .findFirst();
         if (cargoOperationOpt.isPresent()) {
           if (cargoOperationOpt.get().getQuantity().doubleValue() > cargo2Bl) {

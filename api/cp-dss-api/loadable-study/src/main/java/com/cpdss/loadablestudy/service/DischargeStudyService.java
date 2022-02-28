@@ -296,8 +296,7 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
         this.cargoNominationService.saveDsichargeStudyCommingleAsCargoNominations(
             savedDischargeStudy.getId(),
             loadableStudy.getId(),
-            savedDischargeport.getPortXId(),
-            savedDischargeport.getOperation().getId(),
+            savedDischargeport,
             commingleCargoList,
             savedCargos,
             cargoQuantityRatioResponse.getCargoMaxQuantityList());
