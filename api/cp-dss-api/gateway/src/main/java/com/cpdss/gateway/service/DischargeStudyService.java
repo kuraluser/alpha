@@ -183,11 +183,11 @@ public class DischargeStudyService {
   private void addPortRotationDetailsToResponse(
       LoadableStudy.PortRotationReply portRotationReply,
       DischargeStudyResponse dischargeStudyResponse) {
-    List<PortRotation> portRotations = new ArrayList<>();
     dischargeStudyResponse
         .getBillOfLaddings()
         .forEach(
             billOfLadding -> {
+              List<PortRotation> portRotations = new ArrayList<>();
               billOfLadding
                   .getPortRotationIds()
                   .forEach(
