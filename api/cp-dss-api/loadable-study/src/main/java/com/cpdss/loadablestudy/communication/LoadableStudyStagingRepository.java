@@ -57,9 +57,9 @@ public interface LoadableStudyStagingRepository extends StagingRepository {
 
   @Query(
       value =
-          "SELECT  CAST(json_agg(u) as VARCHAR) json_out FROM synoptical_table u where loadable_study_xid=?1",
+          "SELECT  CAST(json_agg(u) as VARCHAR) json_out FROM synoptical_table u where loadable_study_xid in ?1",
       nativeQuery = true)
-  String getSynopticalTableWithLoadableStudyId(Long id);
+  String getSynopticalTableWithLoadableStudyId(List<Long> ids);
 
   @Query(
       value =

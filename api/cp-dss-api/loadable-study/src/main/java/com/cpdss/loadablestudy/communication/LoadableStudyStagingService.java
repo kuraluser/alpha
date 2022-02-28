@@ -1,7 +1,7 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.loadablestudy.communication;
 
-import static com.cpdss.common.communication.CommunicationConstants.*;
+import static com.cpdss.common.communication.CommunicationConstants.CommunicationModule;
 import static com.cpdss.common.utils.MessageTypes.getMessageType;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.LS_STATUS_CONFIRMED;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.SUCCESS;
@@ -649,9 +649,13 @@ public class LoadableStudyStagingService extends StagingService {
             }
           case synoptical_table:
             {
+              Long confirmedLoadabelStudyId = getConfirmedLoadableStudyId(loadableStudyId);
+              List<Long> ids = new ArrayList<>();
+              ids.add(loadableStudyId);
+              if (confirmedLoadabelStudyId != null && confirmedLoadabelStudyId != 0)
+                ids.add(confirmedLoadabelStudyId);
               String synopticalTableJson =
-                  loadableStudyStagingRepository.getSynopticalTableWithLoadableStudyId(
-                      loadableStudyId);
+                  loadableStudyStagingRepository.getSynopticalTableWithLoadableStudyId(ids);
               if (synopticalTableJson != null) {
                 JsonArray synopticalTable =
                     JsonParser.parseString(synopticalTableJson).getAsJsonArray();
@@ -1099,6 +1103,16 @@ public class LoadableStudyStagingService extends StagingService {
       return loadablePatternRepository.getLoadableStudyId(id);
     }
     return id;
+  }
+
+  /**
+   * Method to get confirmed loadable study id based on discharge study
+   *
+   * @param id id value of discharge study
+   * @return confirmed loadable study id
+   */
+  private Long getConfirmedLoadableStudyId(Long id) {
+    return loadableStudyRepository.findById(id).get().getConfirmedLoadableStudyId();
   }
 
   /**

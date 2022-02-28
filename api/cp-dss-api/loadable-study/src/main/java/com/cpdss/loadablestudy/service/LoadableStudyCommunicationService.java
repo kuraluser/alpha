@@ -2,13 +2,8 @@
 package com.cpdss.loadablestudy.service;
 
 // region Import
-import static com.cpdss.common.communication.StagingService.isValidStageEntity;
-import static com.cpdss.common.communication.StagingService.logSavedEntity;
-import static com.cpdss.common.communication.StagingService.setEntityDocFields;
+import static com.cpdss.common.communication.StagingService.*;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.*;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.CPDSS_BUILD_ENV_SHORE;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.LoadableStudyTables;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.SUCCESS;
 import static org.apache.commons.collections4.ListUtils.emptyIfNull;
 
 import com.cpdss.common.communication.CommunicationConstants.CommunicationModule;
@@ -30,7 +25,6 @@ import com.cpdss.loadablestudy.entity.*;
 import com.cpdss.loadablestudy.repository.*;
 import com.cpdss.loadablestudy.repository.communication.LoadableStudyDataTransferInBoundRepository;
 import com.cpdss.loadablestudy.utility.LoadableStudiesConstants;
-import com.cpdss.loadablestudy.utility.LoadableStudiesConstants.LOADABLE_STUDY_COLUMNS;
 import com.cpdss.loadablestudy.utility.ProcessIdentifiers;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.*;
@@ -1305,8 +1299,9 @@ public class LoadableStudyCommunicationService {
       for (SynopticalTable stStage : synopticalTableStage) {
         Optional<SynopticalTable> st = synopticalTableRepository.findById(stStage.getId());
         setEntityDocFields(stStage, st);
-
-        stStage.setLoadableStudyXId(loadableStudyStage.getId());
+        //      commented below line because of communicating multiple loadable study synoptic table
+        // data
+        //      stStage.setLoadableStudyXId(loadableStudyStage.getId());
         Optional<LoadableStudyPortRotation> loadableStudyPortRotationOpt =
             loadableStudyPortRotationRepository.findById(stStage.getCommunicationRelatedEntityId());
         loadableStudyPortRotationOpt.ifPresent(stStage::setLoadableStudyPortRotation);
