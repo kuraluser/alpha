@@ -28,5 +28,4 @@ public class CowPlan {
   private List<Long> allCowTankIds;
   private List<CargoForCowDetails> cargoCowTankIds;
   private List<CowHistory> cowHistories;
-  private Boolean enableDayLightRestriction;
 }

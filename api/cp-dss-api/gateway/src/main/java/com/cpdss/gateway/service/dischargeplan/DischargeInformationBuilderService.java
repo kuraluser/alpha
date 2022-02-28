@@ -399,10 +399,6 @@ public class DischargeInformationBuilderService {
       var1.setCowDuration(cowPlan.getEstCowDuration());
       var1.setWashTanksWithDifferentCargo(cowPlan.getCowWithCargoEnable());
 
-      // Both flags - needFlushihngOil and needCrudeStorage are combined in the frontend.
-      var1.setNeedFlushingOilAndCrudeStorage(
-          cowPlan.getNeedFlushingOil() && cowPlan.getNeedFreshCrudeStorage());
-
       // If no value in discharge-plan DB, set admin Rule Value
       if (cowPlan.getTrimCowMin().isEmpty()) {
         String val = extract.getDefaultValueForKey(AdminRuleTemplate.DISCHARGE_COW_TRIM_MIN, false);
@@ -729,20 +725,12 @@ public class DischargeInformationBuilderService {
     Optional.ofNullable(cowPlan.getCowStart()).ifPresent(builder::setCowStartTime);
     Optional.ofNullable(cowPlan.getCowTrimMax()).ifPresent(builder::setTrimCowMax);
     Optional.ofNullable(cowPlan.getCowTrimMin()).ifPresent(builder::setTrimCowMin);
-    // Both flags - needFlushingOil and needCrudeStorage are combined in the frontend.
-    Optional.ofNullable(cowPlan.getNeedFlushingOilAndCrudeStorage())
-        .ifPresent(
-            needFlushingOilAndCrudeStorage -> {
-              builder.setNeedFlushingOil(needFlushingOilAndCrudeStorage);
-              builder.setNeedFreshCrudeStorage(needFlushingOilAndCrudeStorage);
-            });
+
     Optional.ofNullable(cowPlan.getNeedFreshCrudeStorage())
         .ifPresent(builder::setNeedFreshCrudeStorage);
     Optional.ofNullable(cowPlan.getNeedFlushingOil()).ifPresent(builder::setNeedFlushingOil);
     Optional.ofNullable(cowPlan.getWashTanksWithDifferentCargo())
         .ifPresent(builder::setCowWithCargoEnable);
-    Optional.ofNullable(cowPlan.getEnableDayLightRestriction())
-        .ifPresent(builder::setEnableDayLightRestriction);
 
     return builder.build();
   }
@@ -791,13 +779,9 @@ public class DischargeInformationBuilderService {
                   maxManifoldHeight ->
                       builder.setMaxManifoldHeight(String.valueOf(maxManifoldHeight)));
           Optional.ofNullable(berth.getMaxManifoldPressure())
-              .ifPresent(
-                  maxManifoldPressure ->
-                      builder.setMaxManifoldPressure(String.valueOf(maxManifoldPressure)));
+              .ifPresent(builder::setMaxManifoldPressure);
           Optional.ofNullable(berth.getRegulationAndRestriction())
-              .ifPresent(
-                  restriction ->
-                      builder.setSpecialRegulationRestriction(String.valueOf(restriction)));
+              .ifPresent(builder::setSpecialRegulationRestriction);
           Optional.ofNullable(berth.getSeaDraftLimitation())
               .ifPresent(seaDraft -> builder.setSeaDraftLimitation(String.valueOf(seaDraft)));
           Optional.ofNullable(berth.getItemsToBeAgreedWith())
@@ -809,7 +793,7 @@ public class DischargeInformationBuilderService {
 
           // Regarding DSS-5899 : cargo circulation and air purge check boxes combined to a single
           // field in UI. But algo needs both flags.
-          Optional.ofNullable(berth.getAirPurge()).ifPresent(builder::setCargoCirculation);
+          Optional.ofNullable(berth.getCargoCirculation()).ifPresent(builder::setAirPurge);
           Optional.ofNullable(berth.getCargoCirculation()).ifPresent(builder::setCargoCirculation);
           Optional.ofNullable(berth.getDisplacement())
               .ifPresent(displacement -> builder.setDisplacement(displacement.toString()));

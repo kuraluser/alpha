@@ -499,12 +499,11 @@ public class DischargeInformationService {
     List<BerthDetails> selectedBerths =
         this.infoBuilderService.buildDischargeBerthsFromMessage(
             planReply.getDischargingInformation().getBerthDetailsList());
-    selectedBerths.stream()
-        .forEach(
-            berth -> {
-              berth.setDischargingBerthId(berth.getLoadingBerthId());
-              berth.setDischargeInfoId(berth.getLoadingInfoId());
-            });
+    selectedBerths.forEach(
+        berth -> {
+          berth.setDischargingBerthId(berth.getLoadingBerthId());
+          berth.setDischargeInfoId(berth.getLoadingInfoId());
+        });
     LoadingBerthDetails berthDetails = new LoadingBerthDetails();
     berthDetails.setAvailableBerths(availableBerths);
     berthDetails.setSelectedBerths(selectedBerths);
@@ -528,8 +527,7 @@ public class DischargeInformationService {
         this.loadingInformationService.getPostDischargeStage(
             planReply.getDischargingInformation().getPostDischargeStageTime());
     dischargeInformation.setPostDischargeStageTime(postDischargeStage);
-    CargoNominationReply nominations =
-        loadingPlanService.getCargoNominationsByStudyId(activeVoyage.getActiveDs().getId());
+
     CargoVesselTankDetails vesselTankDetails =
         this.loadingPlanGrpcService.fetchPortWiseCargoDetails(
             vesselId,

@@ -33,4 +33,8 @@ public class BerthDetails {
   private String controllingDepth;
   private String portMaxPermissibleDraft;
   private BigDecimal displacement;
+  private Boolean needFlushingOilAndCrudeStorage;
+  private Boolean enableDayLightRestriction;
+  private BigDecimal freshCrudeOilQuantity;
+  private BigDecimal freshCrudeOilTime;
 }

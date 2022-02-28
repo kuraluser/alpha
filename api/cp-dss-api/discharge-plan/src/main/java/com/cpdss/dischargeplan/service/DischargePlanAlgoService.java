@@ -785,48 +785,77 @@ public class DischargePlanAlgoService {
     buildOnBoardQuantities(algoRequest, entity, response.getLoadableStudyId());
   }
 
+  /**
+   * Builds discharge berth dto for algo
+   *
+   * @param dischargeInformationId discharge information id
+   * @param algoRequest algo request object
+   * @return discharge berth details
+   */
   private DischargeBerthDetails buildDischargeBerthDto(
-      Long id, DischargeInformationAlgoRequest algoRequest) {
+      Long dischargeInformationId, DischargeInformationAlgoRequest algoRequest) {
+
+    log.info("Inside buildDischargeBerthDto method!");
+
     DischargeBerthDetails berthDetails = new DischargeBerthDetails();
-    List<DischargingBerthDetail> list =
-        dischargeBerthDetailRepository.findAllByDischargingInformationIdAndIsActiveTrue(id);
-    if (!list.isEmpty()) {
+    List<DischargingBerthDetail> dischargingBerthDetails =
+        dischargeBerthDetailRepository.findAllByDischargingInformationIdAndIsActiveTrue(
+            dischargeInformationId);
+    if (!dischargingBerthDetails.isEmpty()) {
       berthDetails.setSelectedBerths(
-          list.stream()
+          dischargingBerthDetails.stream()
               .map(
-                  var -> {
+                  dischargingBerthDetail -> {
                     BerthDetails dto = new BerthDetails();
-                    Optional.ofNullable(var.getId()).ifPresent(dto::setDischargeBerthId);
-                    Optional.ofNullable(var.getDischargingInformation().getId())
+
+                    // Set fields
+                    Optional.ofNullable(dischargingBerthDetail.getId())
+                        .ifPresent(dto::setDischargeBerthId);
+                    Optional.ofNullable(dischargingBerthDetail.getDischargingInformation().getId())
                         .ifPresent(dto::setDischargeInfoId);
-                    Optional.ofNullable(var.getBerthXid()).ifPresent(dto::setBerthId);
-                    Optional.ofNullable(var.getDepth()).ifPresent(dto::setMaxShipDepth);
-                    Optional.ofNullable(var.getMaxManifoldHeight())
+                    Optional.ofNullable(dischargingBerthDetail.getBerthXid())
+                        .ifPresent(dto::setBerthId);
+                    Optional.ofNullable(dischargingBerthDetail.getDepth())
+                        .ifPresent(dto::setMaxShipDepth);
+                    Optional.ofNullable(dischargingBerthDetail.getMaxManifoldHeight())
                         .ifPresent(dto::setMaxManifoldHeight);
-                    Optional.ofNullable(var.getMaxManifoldPressure())
+                    Optional.ofNullable(dischargingBerthDetail.getMaxManifoldPressure())
                         .ifPresent(dto::setMaxManifoldPressure);
-                    Optional.ofNullable(var.getSeaDraftLimitation())
+                    Optional.ofNullable(dischargingBerthDetail.getSeaDraftLimitation())
                         .ifPresent(dto::setSeaDraftLimitation);
-                    Optional.ofNullable(var.getAirDraftLimitation())
+
+                    Optional.ofNullable(dischargingBerthDetail.getAirDraftLimitation())
                         .ifPresent(dto::setAirDraftLimitation);
-                    Optional.ofNullable(var.getIsCargoCirculation())
+                    Optional.ofNullable(dischargingBerthDetail.getIsCargoCirculation())
                         .ifPresent(dto::setCargoCirculation);
-                    Optional.ofNullable(var.getIsAirPurge()).ifPresent(dto::setAirPurge);
-                    Optional.ofNullable(var.getLineContentDisplacement())
+                    Optional.ofNullable(dischargingBerthDetail.getIsAirPurge())
+                        .ifPresent(dto::setAirPurge);
+                    Optional.ofNullable(dischargingBerthDetail.getLineContentDisplacement())
                         .ifPresent(dto::setLineDisplacement);
-                    Optional.ofNullable(var.getHoseConnections())
+                    Optional.ofNullable(dischargingBerthDetail.getHoseConnections())
                         .ifPresent(dto::setHoseConnections);
-                    Optional.ofNullable(var.getDisplacement()).ifPresent(dto::setDisplacement);
+                    Optional.ofNullable(dischargingBerthDetail.getDisplacement())
+                        .ifPresent(dto::setDisplacement);
+
+                    Optional.ofNullable(dischargingBerthDetail.getEnableDayLightRestriction())
+                        .ifPresent(dto::setEnableDayLightRestriction);
+                    Optional.ofNullable(dischargingBerthDetail.getNeedFlushingOilAndCrudeStorage())
+                        .ifPresent(dto::setNeedFlushingOilAndCrudeStorage);
+                    Optional.ofNullable(dischargingBerthDetail.getFreshCrudeOilQuantity())
+                        .ifPresent(dto::setFreshCrudeOilQuantity);
+                    Optional.ofNullable(dischargingBerthDetail.getFreshCrudeOilTime())
+                        .ifPresent(dto::setFreshCrudeOilTime);
+
                     // Call 1 to Port info, set value from berth table
                     // Setting berth name
                     this.getBerthDetailsByPortIdAndBerthId(
-                        var.getDischargingInformation().getPortXid(),
-                        var.getBerthXid(),
+                        dischargingBerthDetail.getDischargingInformation().getPortXid(),
+                        dischargingBerthDetail.getBerthXid(),
                         dto,
                         algoRequest);
 
                     // Call 2 to Port info, set value from port table
-                    this.getPortInfoIntoBerthData(var.getBerthXid(), dto);
+                    this.getPortInfoIntoBerthData(dischargingBerthDetail.getBerthXid(), dto);
                     return dto;
                   })
               .collect(Collectors.toList()));

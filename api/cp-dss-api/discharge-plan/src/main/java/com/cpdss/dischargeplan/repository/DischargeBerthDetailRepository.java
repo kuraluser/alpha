@@ -9,7 +9,8 @@ import java.util.Optional;
 public interface DischargeBerthDetailRepository
     extends CommonCrudRepository<DischargingBerthDetail, Long> {
 
-  List<DischargingBerthDetail> findAllByDischargingInformationIdAndIsActiveTrue(Long var1);
+  List<DischargingBerthDetail> findAllByDischargingInformationIdAndIsActiveTrue(
+      Long dischargeInformationId);
 
   List<DischargingBerthDetail> findByDischargingInformationIdAndIsActive(Long id, boolean b);
 

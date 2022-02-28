@@ -557,6 +557,9 @@ public class DischargeInformationBuilderService {
               .ifPresent(draft -> dischargeBerthsBuilder.setSeaDraftLimitation(draft.toString()));
           Optional.ofNullable(dischargingBerthDetail.getAirDraftLimitation())
               .ifPresent(draft -> dischargeBerthsBuilder.setAirDraftLimitation(draft.toString()));
+
+          // Regarding DSS-5899 : cargo circulation and air purge check boxes combined to a single
+          // field in UI. But algo needs both flags.
           Optional.ofNullable(dischargingBerthDetail.getIsAirPurge())
               .ifPresent(dischargeBerthsBuilder::setAirPurge);
           Optional.ofNullable(dischargingBerthDetail.getIsCargoCirculation())

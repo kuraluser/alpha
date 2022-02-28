@@ -38,6 +38,4 @@ public class CowPlan {
   private List<Long> allCow;
 
   private List<CargoForCowDetails> cargoCow;
-  private Boolean needFlushingOilAndCrudeStorage;
-  private Boolean enableDayLightRestriction;
 }
