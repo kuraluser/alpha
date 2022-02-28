@@ -35,7 +35,8 @@ public class CharterDetailsSpecification implements Specification<Charterer> {
       if (criteria.getValue() instanceof String) {
         String val = (String) criteria.getValue();
         return builder.like(
-            builder.upper(root.<String>get(criteria.getKey())), "%" + val.toUpperCase() + "%");
+            builder.upper(root.<String>get(criteria.getKey()).as(String.class)),
+            "%" + val.toUpperCase() + "%");
       }
       //      Partial match
       return builder.like(root.<String>get(criteria.getKey()), "%" + criteria.getValue() + "%");
@@ -45,8 +46,11 @@ public class CharterDetailsSpecification implements Specification<Charterer> {
       if (criteria.getValue() instanceof String) {
         String val = (String) criteria.getValue();
         return builder.like(
-            root.join(criteria.getAttributeName()).<String>get(criteria.getKey()),
-            "%" + val.toUpperCase() + "%");
+            builder.lower(
+                root.join(criteria.getAttributeName())
+                    .<String>get(criteria.getKey())
+                    .as(String.class)),
+            "%" + val.toLowerCase() + "%");
       }
       return builder.like(
           root.join(criteria.getAttributeName()).<String>get(criteria.getKey()),

@@ -5,7 +5,9 @@ import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.VesselInfo;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
+import com.cpdss.vesselinfo.domain.CharterCompanyDetailsSpecification;
 import com.cpdss.vesselinfo.domain.CharterDetailsSpecification;
+import com.cpdss.vesselinfo.domain.CharterTypeDetailsSpecification;
 import com.cpdss.vesselinfo.domain.FilterCriteria;
 import com.cpdss.vesselinfo.entity.*;
 import com.cpdss.vesselinfo.repository.*;
@@ -50,7 +52,7 @@ public class CharterService {
       VesselInfo.CharterInfoRequest request) {
 
     List<String> filterKeys =
-        Arrays.asList("id", "name", "countryName", "companyName", "charterTypeName");
+        Arrays.asList("id", "name", "charterCountryName", "companyName", "charterTypeName");
     Map<String, String> params = new HashMap<>();
     request.getParamList().forEach(param -> params.put(param.getKey(), param.getValue()));
     Map<String, String> filterParams =
@@ -75,6 +77,11 @@ public class CharterService {
             specification.and(
                 new CharterDetailsSpecification(
                     new FilterCriteria("charterTypeName", "like-with-join", value, "charterType")));
+      } else if ("charterCountryName".equalsIgnoreCase(filterKey)) {
+        specification =
+            specification.and(
+                new CharterDetailsSpecification(
+                    new FilterCriteria("charterCountry", "in", request.getCountryXIdsList(), "")));
       } else {
         specification =
             specification.and(
@@ -282,5 +289,126 @@ public class CharterService {
                         });
                   });
             });
+  }
+
+  /**
+   * method to fetch all the charter company details(or filtered ones)
+   *
+   * @param charterCompanyDetailedReply
+   * @param request
+   */
+  public void getAllCharterCompanyDetails(
+      VesselInfo.CharterCompanyDetailedReply.Builder charterCompanyDetailedReply,
+      VesselInfo.CharterCompanyInfoRequest request) {
+
+    List<String> filterKeys = Arrays.asList("id", "charterCompanyName");
+    Map<String, String> params = new HashMap<>();
+    request.getParamList().forEach(param -> params.put(param.getKey(), param.getValue()));
+    Map<String, String> filterParams =
+        params.entrySet().stream()
+            .filter(e -> filterKeys.contains(e.getKey()))
+            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    Specification<ChartererCompany> specification =
+        Specification.where(
+            new CharterCompanyDetailsSpecification(new FilterCriteria("isActive", ":", true, "")));
+
+    for (Map.Entry<String, String> entry : filterParams.entrySet()) {
+      String filterKey = entry.getKey();
+      String value = entry.getValue();
+      specification =
+          specification.and(
+              new CharterCompanyDetailsSpecification(
+                  new FilterCriteria(filterKey, "like", value, "")));
+    }
+
+    // Paging and sorting
+    Pageable paging =
+        PageRequest.of(
+            (int) request.getPageNo(),
+            (int) request.getPageSize(),
+            Sort.by(
+                Sort.Direction.valueOf(request.getOrderBy().toUpperCase()), request.getSortBy()));
+    Page<ChartererCompany> pagedResult =
+        this.charterCompanyRepository.findAll(specification, paging);
+
+    List<ChartererCompany> charterCompanyDetails = pagedResult.toList();
+
+    if (null != charterCompanyDetails && !charterCompanyDetails.isEmpty()) {
+
+      charterCompanyDetails.forEach(
+          chartererCompany -> {
+            VesselInfo.CharterCompanyDetailed.Builder charterCompanyDetailed =
+                VesselInfo.CharterCompanyDetailed.newBuilder();
+            charterCompanyDetailed.setCharterCompanyId(
+                chartererCompany.getId() == null ? 0 : chartererCompany.getId());
+            charterCompanyDetailed.setCharterCompanyName(
+                chartererCompany.getCharterCompanyName() == null
+                    ? ""
+                    : chartererCompany.getCharterCompanyName());
+
+            charterCompanyDetailedReply.addCharterCompanyDetailed(charterCompanyDetailed);
+          });
+    }
+    charterCompanyDetailedReply.setTotalElements(pagedResult.getTotalElements());
+  }
+
+  /**
+   * method to fetch all the charter company details(or filtered ones)
+   *
+   * @param charterTypeDetailedReply
+   * @param request
+   */
+  public void getAllCharterTypeDetails(
+      VesselInfo.CharterTypeDetailedReply.Builder charterTypeDetailedReply,
+      VesselInfo.CharterTypeInfoRequest request) {
+
+    List<String> filterKeys = Arrays.asList("id", "charterTypeName");
+    Map<String, String> params = new HashMap<>();
+    request.getParamList().forEach(param -> params.put(param.getKey(), param.getValue()));
+    Map<String, String> filterParams =
+        params.entrySet().stream()
+            .filter(e -> filterKeys.contains(e.getKey()))
+            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    Specification<ChartererType> specification =
+        Specification.where(
+            new CharterTypeDetailsSpecification(new FilterCriteria("isActive", ":", true, "")));
+
+    for (Map.Entry<String, String> entry : filterParams.entrySet()) {
+      String filterKey = entry.getKey();
+      String value = entry.getValue();
+      specification =
+          specification.and(
+              new CharterTypeDetailsSpecification(
+                  new FilterCriteria(filterKey, "like", value, "")));
+    }
+
+    // Paging and sorting
+    Pageable paging =
+        PageRequest.of(
+            (int) request.getPageNo(),
+            (int) request.getPageSize(),
+            Sort.by(
+                Sort.Direction.valueOf(request.getOrderBy().toUpperCase()), request.getSortBy()));
+    Page<ChartererType> pagedResult = this.charterTypeRepository.findAll(specification, paging);
+
+    List<ChartererType> charterTypeDetails = pagedResult.toList();
+
+    if (null != charterTypeDetails && !charterTypeDetails.isEmpty()) {
+
+      charterTypeDetails.forEach(
+          chartererType -> {
+            VesselInfo.CharterTypeDetailed.Builder charterTypeDetailed =
+                VesselInfo.CharterTypeDetailed.newBuilder();
+            charterTypeDetailed.setCharterTypeId(
+                chartererType.getId() == null ? 0 : chartererType.getId());
+            charterTypeDetailed.setCharterTypeName(
+                chartererType.getCharterTypeName() == null
+                    ? ""
+                    : chartererType.getCharterTypeName());
+
+            charterTypeDetailedReply.addCharterTypeDetails(charterTypeDetailed);
+          });
+    }
+    charterTypeDetailedReply.setTotalElements(pagedResult.getTotalElements());
   }
 }

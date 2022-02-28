@@ -67,6 +67,11 @@ public class CharterServiceTest {
     String correlationId = "1";
     Mockito.when(vesselInfoServiceBlockingStub.getAllCharterDetails(Mockito.any()))
         .thenReturn(getCharterNS());
+    Mockito.when(portInfoServiceBlockingStub.getAllCountries(Mockito.any()))
+        .thenReturn(getAllCountries());
+
+    ReflectionTestUtils.setField(
+        charterService, "portInfoServiceBlockingStub", this.portInfoServiceBlockingStub);
     ReflectionTestUtils.setField(
         charterService, "vesselInfoServiceBlockingStub", this.vesselInfoServiceBlockingStub);
     try {

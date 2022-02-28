@@ -1,6 +1,7 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.domain.chartermaster;
 
+import com.cpdss.gateway.domain.Vessel;
 import java.util.List;
 import lombok.Data;
 
@@ -15,5 +16,5 @@ public class CharterDetailed {
   private Long charterCompanyId;
   private String charterCompanyName;
 
-  private List<CharterVesselMapping> vesselInformation;
+  private List<Vessel> vesselInformation;
 }

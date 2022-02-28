@@ -78,6 +78,10 @@ service VesselInfoService {
 	rpc SaveCharterDetails (CharterDetailed) returns (CharterDetailReply);
 
 	rpc SaveCharterVesselMappings (CharterVesselMappingRequest) returns (CharterVesselReply);
+
+	rpc GetAllCharterCompanyDetails (CharterCompanyInfoRequest) returns (CharterCompanyDetailedReply);
+
+	rpc GetAllCharterTypeDetails (CharterTypeInfoRequest) returns (CharterTypeDetailedReply);
 }
 
 
@@ -891,6 +895,7 @@ message CharterInfoRequest{
 	string orderBy = 4;
 	string vesselName = 5;
 	repeated Param param = 6;
+	repeated int64 countryXIds = 7;
 }
 
 message CharterDetailed {
@@ -930,4 +935,45 @@ message CharterDetailReply {
 message CharterVesselReply {
 	ResponseStatus responseStatus = 1;
 	repeated CharterVesselMappingDetail charterVesselMappings = 2;
+}
+
+message CharterCompanyInfoRequest{
+	int64 pageSize = 1;
+	int64 pageNo = 2;
+	string sortBy = 3;
+	string orderBy = 4;
+	string charterCompanyName = 5;
+	repeated Param param = 6;
+}
+
+message CharterCompanyDetailedReply {
+	ResponseStatus responseStatus = 1;
+	repeated CharterCompanyDetailed charterCompanyDetailed = 2;
+	int64 totalElements = 3;
+}
+
+
+message CharterCompanyDetailed {
+	int64 charterCompanyId = 1;
+	string charterCompanyName = 2;
+}
+
+message CharterTypeInfoRequest{
+	int64 pageSize = 1;
+	int64 pageNo = 2;
+	string sortBy = 3;
+	string orderBy = 4;
+	string charterTypeName = 5;
+	repeated Param param = 6;
+}
+
+message CharterTypeDetailedReply {
+	ResponseStatus responseStatus = 1;
+	repeated CharterTypeDetailed charterTypeDetails = 2;
+	int64 totalElements = 3;
+}
+
+message CharterTypeDetailed {
+	int64 charterTypeId = 1;
+	string charterTypeName = 2;
 }

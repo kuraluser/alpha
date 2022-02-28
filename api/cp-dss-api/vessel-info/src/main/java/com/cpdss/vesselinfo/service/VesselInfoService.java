@@ -3290,4 +3290,53 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
       responseObserver.onCompleted();
     }
   }
+
+  @Override
+  public void getAllCharterCompanyDetails(
+      CharterCompanyInfoRequest request,
+      StreamObserver<CharterCompanyDetailedReply> responseObserver) {
+
+    CharterCompanyDetailedReply.Builder charterCompanyDetailedReply =
+        CharterCompanyDetailedReply.newBuilder();
+
+    try {
+      this.charterService.getAllCharterCompanyDetails(charterCompanyDetailedReply, request);
+
+      ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
+      responseStatus.setStatus(SUCCESS);
+      charterCompanyDetailedReply.setResponseStatus(responseStatus);
+    } catch (Exception e) {
+      log.error("Error in getAllCharterCompanyDetails method ", e);
+      ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
+      responseStatus.setStatus(FAILED);
+      charterCompanyDetailedReply.setResponseStatus(responseStatus);
+    } finally {
+      responseObserver.onNext(charterCompanyDetailedReply.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  @Override
+  public void getAllCharterTypeDetails(
+      CharterTypeInfoRequest request, StreamObserver<CharterTypeDetailedReply> responseObserver) {
+
+    CharterTypeDetailedReply.Builder charterTypeDetailedReply =
+        CharterTypeDetailedReply.newBuilder();
+
+    try {
+      this.charterService.getAllCharterTypeDetails(charterTypeDetailedReply, request);
+
+      ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
+      responseStatus.setStatus(SUCCESS);
+      charterTypeDetailedReply.setResponseStatus(responseStatus);
+    } catch (Exception e) {
+      log.error("Error in getAllCharterTypeDetails method ", e);
+      ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
+      responseStatus.setStatus(FAILED);
+      charterTypeDetailedReply.setResponseStatus(responseStatus);
+    } finally {
+      responseObserver.onNext(charterTypeDetailedReply.build());
+      responseObserver.onCompleted();
+    }
+  }
 }

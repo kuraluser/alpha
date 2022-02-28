@@ -6,9 +6,7 @@ import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.domain.*;
-import com.cpdss.gateway.domain.chartermaster.CharterDetailed;
-import com.cpdss.gateway.domain.chartermaster.CharterDetailedResponse;
-import com.cpdss.gateway.domain.chartermaster.ChartersDetailedResponse;
+import com.cpdss.gateway.domain.chartermaster.*;
 import com.cpdss.gateway.domain.crewmaster.CrewDetailed;
 import com.cpdss.gateway.domain.crewmaster.CrewDetailedResponse;
 import com.cpdss.gateway.domain.crewmaster.CrewsDetailedResponse;
@@ -419,7 +417,7 @@ public class VesselInfoController {
       @RequestHeader HttpHeaders headers,
       @RequestParam(required = false, defaultValue = "10") int pageSize,
       @RequestParam(required = false, defaultValue = "0") int pageNo,
-      @RequestParam(required = false, defaultValue = "name") String sortBy, // charterName
+      @RequestParam(required = false, defaultValue = "name") String sortBy,
       @RequestParam(required = false, defaultValue = "asc") String orderBy,
       @RequestParam Map<String, String> params)
       throws CommonRestException {
@@ -451,10 +449,9 @@ public class VesselInfoController {
    * @throws CommonRestException
    */
   @PostMapping("/master/charter/{charterId}")
-  public CharterDetailedResponse saveCharterDetails( // CrewDetailedResponse
+  public CharterDetailedResponse saveCharterDetails(
       @PathVariable Long charterId,
       @RequestHeader HttpHeaders headers,
-      // @RequestBody CrewDetailed crewDetailed)
       @RequestBody CharterDetailed charterDetailed)
       throws CommonRestException {
 
@@ -475,5 +472,83 @@ public class VesselInfoController {
           e);
     }
     return charterDetailedResponse;
+  }
+
+  /**
+   * To get all Charter Company listing
+   *
+   * @param headers
+   * @param pageSize
+   * @param pageNo
+   * @param sortBy
+   * @param orderBy
+   * @param params
+   * @return response
+   * @throws CommonRestException
+   */
+  @GetMapping("/master/charterCompanyListing")
+  public ChartersCompanysResponse getCharterCompanyDetails(
+      @RequestHeader HttpHeaders headers,
+      @RequestParam(required = false, defaultValue = "10") int pageSize,
+      @RequestParam(required = false, defaultValue = "0") int pageNo,
+      @RequestParam(required = false, defaultValue = "charterCompanyName") String sortBy,
+      @RequestParam(required = false, defaultValue = "asc") String orderBy,
+      @RequestParam Map<String, String> params)
+      throws CommonRestException {
+
+    ChartersCompanysResponse chartersCompanysResponse;
+    try {
+      chartersCompanysResponse =
+          charterService.getCharterCompanyDetails(
+              pageNo, pageSize, sortBy, orderBy, params, CORRELATION_ID_HEADER);
+    } catch (Exception e) {
+      log.error("Error in listing charter companies", e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
+    return chartersCompanysResponse;
+  }
+
+  /**
+   * To get all Charter Type listing
+   *
+   * @param headers
+   * @param pageSize
+   * @param pageNo
+   * @param sortBy
+   * @param orderBy
+   * @param params
+   * @return response
+   * @throws CommonRestException
+   */
+  @GetMapping("/master/charterTypesListing")
+  public ChartersTypesResponse getCharterTypeDetails(
+      @RequestHeader HttpHeaders headers,
+      @RequestParam(required = false, defaultValue = "10") int pageSize,
+      @RequestParam(required = false, defaultValue = "0") int pageNo,
+      @RequestParam(required = false, defaultValue = "charterTypeName") String sortBy,
+      @RequestParam(required = false, defaultValue = "asc") String orderBy,
+      @RequestParam Map<String, String> params)
+      throws CommonRestException {
+
+    ChartersTypesResponse chartersTypesResponse;
+    try {
+      chartersTypesResponse =
+          charterService.getCharterTypeDetails(
+              pageNo, pageSize, sortBy, orderBy, params, CORRELATION_ID_HEADER);
+    } catch (Exception e) {
+      log.error("Error in listing charter types", e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
+    return chartersTypesResponse;
   }
 }
