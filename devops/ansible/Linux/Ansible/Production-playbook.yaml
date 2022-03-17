@@ -1,15 +1,25 @@
 # Ansible playbook CPDSS Ship Installation - Docker Microservices
 ---
-- name: "CPDSS - Microservice Installation - Thinkpalm Instance"
+- name: "CPDSS - Microservice Installation - Producti0n Instance"
   hosts: all
   become: true
+  gather_facts: yes
+  vars:  
+     inventory_hostname: MY_HOST_IP
+     
   tasks:
+  
+    
+    - name: Get My_hostip
+      debug: var=inventory_hostname
+   
     - name: Update all packages
       apt:
         name: '*'
         state: latest
         update_cache: yes
         force_apt_get: yes
+    
 
     - name: Ensure a list of apt packages are installed
       apt:
@@ -21,7 +31,7 @@
         - python3-pip
         - awscli
         - docker-compose
-        - nfs-common
+        - cifs-utils
 
     - name: Add Docker GPG apt Key
       apt_key:
@@ -49,8 +59,8 @@
         enabled: yes
 
     - name: reset ssh connection to allow user changes to affect ansible user
-      ansible.builtin.meta:
-        reset_connection
+      meta: reset_connection
+        
 
     - name: Check if swarm is already initialised
       shell: |
@@ -82,50 +92,60 @@
       changed_when: false
       register: user_home
 
-    - name: Create EFS Directory
+    - name: Create QNAP Directory
       remote_user: '{{ ansible_ssh_user }}'
       file:
-        path: '{{ user_home.stdout }}/efs'
+        path: '/mnt/backup'
         state: directory
-        owner: '{{ ansible_ssh_user }}'
-        group: '{{ ansible_ssh_user }}'
+        owner: "nobody"
+        group: "nogroup"
+    
+    - name: create etc backup cred 
+      copy:
+        dest: "/etc/backup-cred"
+        content: |
+          username=cpdssadmin
+          password=Cpdss@@!234
+          domain=gassan.ship.molsa.com.sg
 
-    # - name: Create fstab entry for backup drive
-    #   mount: 
-    #     state: present 
-    #     fstype: nfs4
-    #     opts: "nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport" 
-    #     src: fs-cff0088f.efs.ap-southeast-1.amazonaws.com:/
-    #     path: '{{ user_home.stdout }}/efs'
-    #   become: true
     
-    # - name: Check if efs is already mounted
-    #   shell: df | grep "/home/ec2-user/efs" | wc -l
-    #   register: efs_checked
+    - name: Create fstab entry for backup drive
+      mount: 
+        state: present 
+        fstype: cifs
+        opts: "credentials=/etc/backup-cred,sec=ntlmsspi,vers=3.0"  
+        src: "//10.226.16.213/CP-DSS Backup"
+        path: '/mnt/backup'
+      become: true
     
-    # - name: output debug
-    #   debug: var=efs_checked
+    
+    - name: Check if qnap is already mounted
+      shell: df | grep "/mnt/backup" | wc -l
+      register: qnap_checked
+    
+    - name: output debug
+      debug: var=qnap_checked
 
     # - name: Mount backup drive
     #   shell: |
-    #     mount '{{ user_home.stdout }}/efs'
+    #     mount '/mnt/backup'
     #   become: true
-    #   when: efs_checked.stdout == "0"
+    #   when: qnap_checked.stdout == "0"
 
     - name: 'create mount directory for {{ env_name }}'
       file:
-        path: '{{ user_home.stdout }}/efs/{{ env_name }}'
+        path: '/mnt/backup/{{ env_name }}'
         state: directory
-        owner: '{{ ansible_ssh_user }}'
-        group: '{{ ansible_ssh_user }}'
+        owner: "nobody"
+        group: "nogroup"
         mode: 0777
     
     - name: Create Envoy Data Directory
       file:
-        path: '{{ user_home.stdout }}/efs/{{ env_name }}/envoy-data'
+        path: '/mnt/backup/{{ env_name }}/envoy-data'
         state: directory
 
     - name: Create Json Directory
       file:
-        path: '{{ user_home.stdout }}/efs/{{ env_name }}/json'
+        path: '/mnt/backup {{ env_name }}/json'
         state: directory

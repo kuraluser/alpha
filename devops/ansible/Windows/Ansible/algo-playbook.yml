@@ -8,17 +8,21 @@
         name: python
         version: 3.6.8
         state: present
-    
+    - name: Install vcredis
+      win_chocolatey:
+        name: vcredist140
+        version: 14.29.30135
+        state: present
     - name: Copy Files
       ansible.windows.win_copy:
         src: ../ALGO-Essentials/
         dest: 'C:\Users\{{ ansible_user }}\Desktop\ALGO\essentials'
     
-    # Copy AMPL zip to the src folder before execution
-    - name: Unzip AMPL.zip
-      community.windows.win_unzip:
-        src: 'C:\Users\{{ ansible_user }}\Desktop\ALGO\essentials\ampl.CPDSS.win.zip'
-        dest: 'C:\Users\{{ ansible_user }}\Desktop\ampl'
+    # # Copy AMPL zip to the src folder before execution
+    # - name: Unzip AMPL.zip
+    #   community.windows.win_unzip:
+    #     src: 'C:\Users\{{ ansible_user }}\Desktop\ALGO\essentials\ampl.CPDSS.win.zip'
+    #     dest: 'C:\Users\{{ ansible_user }}\Desktop\ampl'
     
     # Copy nssm zip to the src folder before execution
     - name: Unzip nssm-2.24.zip
@@ -26,10 +30,10 @@
         src: 'C:\Users\{{ ansible_user }}\Desktop\ALGO\essentials\nssm-2.24.zip'
         dest: 'C:\Users\{{ ansible_user }}\Desktop\ALGO\essentials'
 
-    - name: Add AMPL path to Env Var
+    - name: Add nssm path to Env Var
       win_path:
         name: PATH
-        elements: 'C:\Users\{{ ansible_user }}\Desktop\ampl\ampl.mswin64\'
+        elements: 'C:\Users\{{ ansible_user }}\Desktop\ALGO\essentials\nssm-2.24\win64'
         scope: machine
         state: present
       
