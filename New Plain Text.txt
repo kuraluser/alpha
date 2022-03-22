@@ -1,0 +1,405 @@
+Click on File -> New Project
+Select JavaWeb under categories and let the Projects be Web Application
+In the Project Name field, Type the Name you want to set for your web application
+In the Server and Settings wizard,
+Choose the Application Server platform you want,  from the Server Drop Down Weblogic, Glassfish, Tomcat
+Choose your JavaEE version
+Set the Context Path for your application ( By default, your project name)
+Click on Finish
+Once you are presented with the default index.html of your project, Update the file with your desired code.
+To Deploy and Run your application, Click on your Project Name on the Navigator on the left panel and choose your desired operation.
+This way you can create a minimal and working web application for the weblogic application server and the same code can be used for Tomcat and JBoss, and there would be some little modifications may require for Websphere to make the same code to work.
+
+Rather reinventing the wheel, you can import the SampleWebApp discussed in this post into your NetBeans IDE.
+
+Download the NetBeans ZIP file for SampleWebApp
+
+ 
+
+Steps to Import the SampleWebApp into your Netbeans IDE
+Download the ZIP distribution of SampleWebApp from here
+In Netbeans, Go to File menu and click on Import Project and then choose From ZIP
+Browse and Select the ZIP file you have downloaded in Step1
+Once you have imported the Project, you can view the code and modify it and rebuild it and Deploy it to your local Application Server
+
+ 
+
+Testing the Sample Web Application ( Screenshots)
+In my local Infrastructure, I have deployed the subjected SampleWebApp.war into Tomcat 8 and Weblogic 12c and this is how the runtime Application looks like in the browser
+
+The Common Home page
+
+The Home Page of the application is common for all the application servers and it has a link(hyperlink) to reach the SnoopServlet
+
+
+
+ 
+
+
+ 
+The Snoop Servlet Page
+
+The Snoop Servlet would differ for each application server as it displays the URL it connects to and the JVM name.
+
+The JVM Name or Application Server Instance Name will be displayed only for Weblogic Server as Tomcat has no concept of Instance name like Weblogic does.
+
+ Dont Get confused by seeing a different URL ( welcome.jsp) in the HTTP Request URL. We intentionally designed our SnoopServlet to invoke the welcome.jsp internally to display the results for better Display and Styles (CSS & tables)
+
+SnoopServlet is displaying the Actual handling file/URI of the Request which is welcome.jsp.
+
+
+
+ 
+
+Code and Explanation
+The SampleWebApp.war consists of  Three important files and they are given here and explained
+
+The Index.html page
+
+It is a simple front-end HTML file with a hyperlink to the Snoop servlet.
+
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>SampleWebApp</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <h2>Sample Web Application To Deploy and Test</h2>
+        <br>
+    <div> click <a href="SnoopServlet">Click to Invoke a SnoopServlet</a></div>
+    <br>
+    <br>
+    
+    
+    </body>
+</html>
+ 
+
+The SnoopServlet
+
+The SnoopServlet is a servlet to display the HTTP request information and Server information in a Debug manner.
+
+For Better Code efficiency and for Good Formatting (css and tables) we have moved the Logic part which displays all these HTTP and Server information to the JSP file named welcome.jsp 
+
+So the Snoop servlet here just invokes the welcome.jsp file and that does all the work for us
+
+Since the Servlet code is usually big, We have just given the main and primary function of servlet which is processRequest
+
+  protected void processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        response.setContentType("text/html;charset=UTF-8");
+        try (PrintWriter out = response.getWriter()) {
+          try {
+            RequestDispatcher view = request.getRequestDispatcher("welcome.jsp");
+            view.forward(request,response);
+                    
+        } finally {
+            out.close();
+        }
+        }
+        
+    }
+ 
+The Welcome.jsp file
+
+As said earlier,  the welcome.jsp is doing all the logic required to print the Debugging information like HTTP request headers, cookies, Server related information etc.
+
+<%-- 
+    Document   : welcome
+    Created on : 23 Jul, 2018, 5:39:03 AM
+    Author     : aksarav@middlewareinventory.com
+--%>
+
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ page import="java.util.*" %>
+<%@ page import="java.net.InetAddress" %>
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet"> 
+        <title>Sample Web Application  - SnoopServlet</title>
+        <style>
+            body{
+                font-family: 'Open Sans', sans-serif;
+            }
+            table,td,tr{
+                border: 1px solid;
+                border-collapse: collapse;
+            }
+            span{
+                font-weight: normal;
+                font-size: 16px;
+                color: black;
+            }
+            </style>
+    </head>
+    <body>
+        
+        <%
+            String hostName;
+            String serverName;
+            Date Time;
+            String Dtime;
+            hostName = InetAddress.getLocalHost().getHostName()+" with IP="+InetAddress.getLocalHost().getHostAddress()+" ";
+            serverName = System.getProperty("weblogic.Name");
+            Time = new Date();
+            Dtime = Time.toString();
+            %>
+        
+        <h2> This is a Sample Web Application - Snoop Servlet  </h2>
+        <hr>
+        
+         <div>
+            <h4>Host Name & IP Address: <span><%=  hostName %></span></h4>
+            <h4>JVM Name: <span><%=  serverName %></span></h4>
+            <h4> Date & Time: <span> <%= Dtime %> </h4>
+        </div>
+        
+        <h4>HTTP Request URL : <span><%= request.getRequestURL() %></span></h4>
+        <h4>HTTP Request Method : <span><%= request.getMethod() %></span></h4>
+ 
+        <h4>HTTP Request Headers Received</h4>
+        
+        <table>
+            <% 
+                Enumeration enumeration = request.getHeaderNames(); 
+                while (enumeration.hasMoreElements()) 
+                 { 
+                  String name=(String) 
+                  enumeration.nextElement(); 
+                  String value = request.getHeader(name);
+              %>
+                <tr>
+                    <td>
+                        <%=name %>
+                    </td>
+                    <td>
+                        <%=value %>
+                    </td>
+                </tr>
+             <% } %>
+        </table>
+        
+        <h4>HTTP Cookies Received</h4>
+           
+          <table>
+               <%
+            
+            Cookie[] arr1= request.getCookies();
+            for (int i=0; i < arr1.length; i++)
+            {
+                String cookiename = arr1[i].getName();
+                String cookievalue = arr1[i].getValue();
+            
+            %>
+                <tr>
+                    <td>
+                        <%=cookiename %>
+                    </td>
+                    <td>
+                        <%=cookievalue %>
+                    </td>
+                </tr>
+             <% } %>
+        </table>  
+            
+        
+</body>
+</html>
+ 
+
+How to Handle the WAR file ( Additional Content)
+There are few frequently asked questions amongst Middleware Administrators like
+
+“How to extract the war file in windows or Linux
+
+Display the content of the WAR file without extracting it
+
+Extract the war file and modify something and rebuild the war file” 
+
+If that is your question too.  This could help you.
+
+ 
+
+Extract the WAR file using a JAR command
+
+Just like javac and java, Jar command is also available in $JAVA_HOME/bin directory. you can use jar -cvf command to extract the WAR file
+
+$ jar -xvf SampleWebApp.war 
+  created: META-INF/
+extracted: META-INF/MANIFEST.MF
+  created: WEB-INF/
+  created: WEB-INF/classes/
+  created: WEB-INF/classes/com/
+  created: WEB-INF/classes/com/middlewareinventory/
+extracted: META-INF/context.xml
+extracted: WEB-INF/classes/com/middlewareinventory/SnoopServlet.class
+extracted: WEB-INF/web.xml
+extracted: WEB-INF/weblogic.xml
+extracted: index.html
+extracted: welcome.jsp
+ 
+
+Display what is inside the WAR file without Extracting
+
+you can use jar -tvf command to display what is inside the war file without even having to extract it
+
+$ jar -tvf SampleWebApp.war
+     0 Sun Feb 17 21:18:48 IST 2019 META-INF/
+   104 Sun Feb 17 21:18:46 IST 2019 META-INF/MANIFEST.MF
+     0 Sun Feb 17 21:18:46 IST 2019 WEB-INF/
+     0 Sun Feb 17 21:18:46 IST 2019 WEB-INF/classes/
+     0 Sun Feb 17 21:18:46 IST 2019 WEB-INF/classes/com/
+     0 Sun Feb 17 21:18:46 IST 2019 WEB-INF/classes/com/middlewareinventory/
+    71 Sun Feb 17 21:18:46 IST 2019 META-INF/context.xml
+  2073 Sun Feb 17 21:18:46 IST 2019 WEB-INF/classes/com/middlewareinventory/SnoopServlet.class
+   688 Sun Feb 17 21:18:46 IST 2019 WEB-INF/web.xml
+   568 Sun Feb 17 21:18:46 IST 2019 WEB-INF/weblogic.xml
+   581 Sun Feb 17 21:18:46 IST 2019 index.html
+  3097 Sun Feb 17 21:18:46 IST 2019 welcome.jsp
+ 
+Re-Building the WAR file after Modification (or) Creating a WAR file
+
+$ jar -cvf SampleWebApp.war welcome.jsp index.html WEB-INF/ META-INF/
+added manifest
+adding: welcome.jsp(in = 3097) (out= 1020)(deflated 67%)
+adding: index.html(in = 581) (out= 323)(deflated 44%)
+adding: WEB-INF/(in = 0) (out= 0)(stored 0%)
+adding: WEB-INF/classes/(in = 0) (out= 0)(stored 0%)
+adding: WEB-INF/classes/com/(in = 0) (out= 0)(stored 0%)
+adding: WEB-INF/classes/com/middlewareinventory/(in = 0) (out= 0)(stored 0%)
+adding: WEB-INF/classes/com/middlewareinventory/SnoopServlet.class(in = 2073) (out= 985)(deflated 52%)
+adding: WEB-INF/web.xml(in = 688) (out= 279)(deflated 59%)
+adding: WEB-INF/weblogic.xml(in = 568) (out= 260)(deflated 54%)
+ignoring entry META-INF/
+adding: META-INF/context.xml(in = 71) (out= 73)(deflated -2%)
+ignoring entry META-INF/MANIFEST.MF
+The Syntax of this command is simple.
+
+jar -cvf  <WAR file Name> <List of files to be added into WAR file seperated by space>
+ 
+
+Further References
+J2EE Documentation – J2EE Documentation from Oracle
+ 
+
+Hope it helps
+
+rate this article [ratings]
+
+Cheers,
+Sarav AK
+
+Buy Me a Coffee at ko-fi.com
+Follow us on  Facebook or  Twitter
+For more practical videos and tutorials. Subscribe to our channel
+Find me on Linkedin My Profile
+For any Consultation or to hire us hello@gritfy.com
+If you like this article. Show your Support! Buy me a Coffee.
+Signup for Exclusive "Subscriber-only" Content
+
+Name*
+Email*
+More from Middleware Inventory
+
+Sample Web Application with Form-Based Authentication - Step by Step
+Designing WEB Applications with Web Browser based security is very common. There are three types of Authentication methods generally being used as follows Basic Authentication Form-Based Authentication Client Cert Authentication Most of the Web Applications are using Form Based Authentication method where the user will be submitting their credentials through…
+
+
+A Simple SOAP Web service Application for Weblogic - Development and Testing
+In this post, we are going to briefly cover, What is web services and its types? How to develop a Simple SOAP Web service for Weblogic?  followed by deployment and testing using POSTMAN and SOAP UI We use Weblogic 12c application server as a platform to deploy our Simple SOAP…
+
+Docker tomcat Container
+Docker Tomcat Example - Dockerfile for Tomcat, Docker Tomcat Image
+In this post, we are going to learn how to install a Tomcat Application Server or Web Container on Docker and Deploy web applications into the Tomcat running inside Docker.  This post is all about Docker Tomcat and deploying war web application into tomcat docker, Sample Docker Tomcat image, Dockerfile…
+
+
+Weblogic Application Status Script WLST
+To Get the Deployed Application Status in the Weblogic Domain, you can use the following python script and run it with WLST. It has nice Formatting and this post also covers "How to ignore or avoid the weblogic informational messages while running the WLST script" Copy the Script given below…
+
+
+ansible search for string in file or check if string exists in file
+The Objective of this post is to show how to search for a string in a file with ansible. ansible provides various ways to accomplish the same.  We will cover,  three major ways to search for a string in a file. Lineinfile module Using the Shell module and grep command…
+
+a sample web application in javaa sample web application to downloadjava web appsample war file to downloadsimple tomcat applicationsimple war filesimple weblogic applicationtest war filetomcat sample war fileweb app examplesweblogic sample war file
+Post navigation
+Previous Post:Weblogic request processing time – Time taken to complete the requestNext Post:What is Container and Containerization – Getting Started Guide
+
+
+SEARCH
+Search …
+
+CATEGORIES
+ActiveMQ (3)
+Ansible (63)
+Apache (8)
+AWS (22)
+Best Practice (5)
+BitBucket (1)
+Boto (1)
+Cloud (1)
+Database (1)
+Development (3)
+Docker (11)
+EFK (1)
+Elastic Search (1)
+F5-Big-IP (6)
+FluentD (2)
+GCP – GoogleCloud (1)
+Grafana (1)
+Graphite (1)
+IBM Cloud (1)
+IBM Websphere (2)
+IHS and Apache (10)
+IIS (4)
+JavaScript (3)
+Jenkins (4)
+Joomla (1)
+Kubernetes (9)
+Middleware (3)
+Network Troubleshooting (1)
+Networking (1)
+NodeJS (2)
+Office365 (1)
+OpenSource (2)
+Oracle DB (3)
+Oracle Weblogic (2)
+Packer (2)
+Perl (1)
+PHP (1)
+PowerShell (1)
+problem/solution (8)
+Prometheus (1)
+Python Flask (1)
+python_scripts (7)
+Shell Scripting (5)
+SOAP Web Services (1)
+Splunk (1)
+SRE (1)
+StatsD (1)
+Terraform (9)
+tomcat (7)
+tools (5)
+Traefik (1)
+Troubleshooting (3)
+Uncategorized (4)
+Unix (5)
+Vagrant (4)
+VueJS (2)
+Vulnerabilities & Fixes (21)
+weblogic (51)
+Webserver (1)
+Websphere (8)
+Windows Server (5)
+wlst (7)
+wordpress (2)
+wsadmin scripts (1)
+Powered by MiddlewareInventory and gritfy0 0   
